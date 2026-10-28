@@ -136,3 +136,5 @@ result = {
 }
 
 print(json.dumps(result, indent=2))
+print("\n=== RESULTADO DE NETBOX ===", flush=True)
+print(json.dumps(result, indent=2, ensure_ascii=False), flush=True)
