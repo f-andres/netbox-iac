@@ -1,0 +1,87 @@
+
+name: Test GitHub Runner - NetBox
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test-netbox:
+    name: Verify runner and NetBox API
+    runs-on: [self-hosted, macOS]
+    timeout-minutes: 5
+
+    env:
+      NETBOX_URL: ${{ vars.NETBOX_URL || 'http://localhost:8000' }}
+      NETBOX_TOKEN: ${{ secrets.NETBOX_TOKEN }}
+      NETBOX_AUTH_SCHEME: ${{ vars.NETBOX_AUTH_SCHEME || 'Bearer' }}
+
+    steps:
+      - name: 1. Verify runner
+        shell: bash
+        run: |
+          echo "Runner: $(hostname)"
+          echo "Operating system: $(uname -s)"
+          echo "Architecture: $(uname -m)"
+          echo "Runner is executing the workflow successfully."
+
+      - name: 2. Verify NetBox connectivity
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          HTTP_CODE=$(curl -sS -o /dev/null \
+            -w "%{http_code}" \
+            --connect-timeout 5 \
+            "$NETBOX_URL/")
+
+          echo "NetBox HTTP status: $HTTP_CODE"
+
+          case "$HTTP_CODE" in
+            200|301|302|303|307|308)
+              echo "NetBox web service is reachable."
+              ;;
+            *)
+              echo "::error::NetBox returned HTTP $HTTP_CODE"
+              exit 1
+              ;;
+          esac
+
+      - name: 3. Verify NetBox API authentication
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [ -z "${NETBOX_TOKEN:-}" ]; then
+            echo "::error::Configure the NETBOX_TOKEN secret in GitHub."
+            exit 1
+          fi
+
+          RESPONSE_FILE=$(mktemp)
+          trap 'rm -f "$RESPONSE_FILE"' EXIT
+
+          HTTP_CODE=$(curl -sS \
+            --connect-timeout 5 \
+            -o "$RESPONSE_FILE" \
+            -w "%{http_code}" \
+            -H "Authorization: ${NETBOX_AUTH_SCHEME} ${NETBOX_TOKEN}" \
+            -H "Accept: application/json" \
+            "$NETBOX_URL/api/dcim/sites/?limit=1")
+
+          echo "NetBox API HTTP status: $HTTP_CODE"
+
+          if [ "$HTTP_CODE" != "200" ]; then
+            echo "::error::NetBox API request failed. Check the token, permissions and authentication scheme."
+            exit 1
+          fi
+
+          python3 -c '
+          import json, sys
+          with open(sys.argv[1], encoding="utf-8") as f:
+              data = json.load(f)
+          print("API response is valid JSON.")
+          print("Sites returned:", len(data.get("results", [])))
+          print("NetBox API connectivity and authentication OK.")
+          ' "$RESPONSE_FILE"
