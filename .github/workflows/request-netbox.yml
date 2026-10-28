@@ -52,40 +52,9 @@ jobs:
               encoding="utf-8",
           )
 
-          print("JSON limpio generado:")
+          print("JSON generado:")
           print(json.dumps(data, indent=2, ensure_ascii=False))
   
-
-      - name: Inspect Python script
-        shell: bash
-        run: |
-          set -euo pipefail
-          echo "Repositorio:"
-          pwd
-          echo "Ruta del script:"
-          realpath scripts/validate_request.py
-          echo "Bloque de escritura del resultado:"
-          grep -n -A 18 -B 5 'netbox-result.json' scripts/validate_request.py
- 
-      - name: Debug NetBox result
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          echo "Directorio actual:"
-          pwd
-
-          echo "Tamaño del archivo:"
-          wc -c netbox-result.json
-
-          echo "Contenido del archivo:"
-          cat netbox-result.json
-
-          echo "Validación JSON:"
-          python3 -m json.tool netbox-result.json
-
-
-
       - name: Verify NetBox JSON
         shell: bash
         run: |
