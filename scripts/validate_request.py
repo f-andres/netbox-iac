@@ -135,6 +135,14 @@ result = {
     "registered_ips_in_prefix": len(used),
 }
 
+Path("netbox-result.json").write_text(
+    json.dumps(result, indent=2),
+    encoding="utf-8",
+)
+
+print(f"IP candidata de NetBox: {ip_candidate}")
+print("Resultado guardado en netbox-result.json")
+
 print(json.dumps(result, indent=2))
 print("\n=== RESULTADO DE NETBOX ===", flush=True)
 print(json.dumps(result, indent=2, ensure_ascii=False), flush=True)
