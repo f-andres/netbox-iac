@@ -1,0 +1,37 @@
+
+name: Read TOML and query NetBox
+
+on:
+  workflow_dispatch:
+    inputs:
+      request_path:
+        description: "Ruta del TOML dentro de requests/"
+        required: true
+        type: string
+        default: "requests/vm-dev-01.toml"
+
+permissions:
+  contents: read
+
+jobs:
+  validate-request:
+    runs-on: [self-hosted, macOS]
+    timeout-minutes: 5
+
+    env:
+      NETBOX_URL: ${{ vars.NETBOX_URL || 'http://localhost:8000' }}
+      NETBOX_TOKEN: ${{ secrets.NETBOX_TOKEN }}
+      NETBOX_AUTH_SCHEME: ${{ vars.NETBOX_AUTH_SCHEME || 'Bearer' }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate TOML and query NetBox
+        shell: bash
+        env:
+          REQUEST_PATH: ${{ inputs.request_path }}
+        run: |
+          set -euo pipefail
+          python3 --version
+          python3 scripts/validate_request.py "$REQUEST_PATH"
