@@ -37,6 +37,16 @@ jobs:
           python3 scripts/validate_request.py "$REQUEST_PATH" | tee netbox-result.json
           cat netbox-result.json >> "$GITHUB_STEP_SUMMARY"
 
+      - name: Inspect Python script
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "Repositorio:"
+          pwd
+          echo "Ruta del script:"
+          realpath scripts/validate_request.py
+          echo "Bloque de escritura del resultado:"
+          grep -n -A 18 -B 5 'netbox-result.json' scripts/validate_request.py
  
       - name: Debug NetBox result
         shell: bash
@@ -54,6 +64,7 @@ jobs:
 
           echo "Validación JSON:"
           python3 -m json.tool netbox-result.json
+
 
 
       - name: Verify NetBox JSON
