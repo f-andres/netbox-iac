@@ -140,7 +140,7 @@ Path("netbox-result.json").write_text(
     encoding="utf-8",
 )
 
-p
+
 print(f"IP candidata de NetBox: {candidate}", flush=True)
 print("Resultado guardado en netbox-result.json", flush=True)
 print("=== RESULTADO DE NETBOX ===", flush=True)
