@@ -135,13 +135,15 @@ result = {
     "registered_ips_in_prefix": len(used),
 }
 
-Path("netbox-result.json").write_text(
+# Guardar exclusivamente el objeto JSON en el archivo.
+output_file = Path.cwd() / "netbox-result.json"
+output_file.write_text(
     json.dumps(result, indent=2, ensure_ascii=False) + "\n",
     encoding="utf-8",
 )
 
-
+# Estos mensajes se muestran en los logs, no dentro del archivo.
 print(f"IP candidata de NetBox: {candidate}", flush=True)
-print("Resultado guardado en netbox-result.json", flush=True)
+print(f"Resultado guardado en {output_file}", flush=True)
 print("=== RESULTADO DE NETBOX ===", flush=True)
 print(json.dumps(result, indent=2, ensure_ascii=False), flush=True)
