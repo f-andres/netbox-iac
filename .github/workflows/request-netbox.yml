@@ -36,3 +36,24 @@ jobs:
           python3 --version
           python3 scripts/validate_request.py "$REQUEST_PATH" | tee netbox-result.json
           cat netbox-result.json >> "$GITHUB_STEP_SUMMARY"
+
+
+      - name: Terraform init
+        shell: bash
+        run: |
+          set -euo pipefail
+          terraform -chdir=terraform/local-test init -backend=false
+
+      - name: Terraform plan
+        shell: bash
+        run: |
+          set -euo pipefail
+          terraform -chdir=terraform/local-test plan \
+            -var-file=../../netbox-result.json \
+            -out=tfplan
+
+          echo "## Resultado Terraform" >> "$GITHUB_STEP_SUMMARY"
+          echo '```text' >> "$GITHUB_STEP_SUMMARY"
+          terraform -chdir=terraform/local-test show -no-color tfplan \
+            >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
