@@ -37,6 +37,26 @@ jobs:
           python3 scripts/validate_request.py "$REQUEST_PATH" | tee netbox-result.json
           cat netbox-result.json >> "$GITHUB_STEP_SUMMARY"
 
+      - name: Debug NetBox result
+        shell: bash
+        run: |
+          set -eu
+          echo "Directorio actual:"
+          pwd
+
+          echo "Archivos JSON encontrados:"
+          find . -name "netbox-result.json" -type f -print
+
+          echo "Contenido del archivo esperado:"
+          if [ -f netbox-result.json ]; then
+            ls -l netbox-result.json
+            wc -c netbox-result.json
+            cat -A netbox-result.json
+          else
+            echo "No existe netbox-result.json en la raíz del repositorio"
+            exit 1
+          fi
+
       - name: Verify NetBox JSON
         shell: bash
         run: |
