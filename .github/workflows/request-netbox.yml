@@ -37,6 +37,11 @@ jobs:
           python3 scripts/validate_request.py "$REQUEST_PATH" | tee netbox-result.json
           cat netbox-result.json >> "$GITHUB_STEP_SUMMARY"
 
+      - name: Verify NetBox JSON
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m json.tool netbox-result.json
 
       - name: Terraform init
         shell: bash

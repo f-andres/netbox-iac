@@ -136,13 +136,12 @@ result = {
 }
 
 Path("netbox-result.json").write_text(
-    json.dumps(result, indent=2),
+    json.dumps(result, indent=2, ensure_ascii=False) + "\n",
     encoding="utf-8",
 )
 
+p
 print(f"IP candidata de NetBox: {candidate}", flush=True)
-print("Resultado guardado en netbox-result.json")
-
-print(json.dumps(result, indent=2))
-print("\n=== RESULTADO DE NETBOX ===", flush=True)
+print("Resultado guardado en netbox-result.json", flush=True)
+print("=== RESULTADO DE NETBOX ===", flush=True)
 print(json.dumps(result, indent=2, ensure_ascii=False), flush=True)
