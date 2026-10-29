@@ -1,0 +1,14 @@
+
+[request]
+request_id = "REQ-0002"
+resource_type = "ec2"
+name = "vm-dev-02"
+environment = "dev"
+
+[compute]
+instance_type = "t3.small"
+operating_system = "linux"
+
+[network]
+site = "lab-local"
+prefix = "192.168.50.0/24"
