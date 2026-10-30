@@ -1,13 +1,15 @@
 
 [request]
 request_id = "REQ-0001"
-resource_type = "ec2"
+resource_type = "vm"
 name = "vm-dev-01"
 environment = "dev"
 
 [compute]
-instance_type = "t3.small"
-operating_system = "linux"
+cpus = 2
+memory = "2G"
+disk = "20G"
+image = "24.04"
 
 [network]
 site = "lab-local"

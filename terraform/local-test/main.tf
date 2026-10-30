@@ -1,6 +1,19 @@
 
 terraform {
-  required_version = ">= 1.4.0"
+  required_version = ">= 1.6.0"
+
+  required_providers {
+    multipass = {
+      source  = "todoroff/multipass"
+      version = "2.1.0"
+    }
+  }
+}
+
+provider "multipass" {
+  multipass_path  = "/usr/local/bin/multipass"
+  command_timeout = 600
+  default_image   = "24.04"
 }
 
 variable "request_id" {
@@ -41,15 +54,15 @@ variable "registered_ips_in_prefix" {
 
 resource "terraform_data" "vm_request" {
   input = {
-    request_id                 = var.request_id
-    vm_name                    = var.vm_name
-    environment                = var.environment
-    site                       = var.site
-    prefix                     = var.prefix
-    prefix_id                  = var.prefix_id
-    ip_address                 = var.ip_candidate
-    ip_candidate_reserved      = var.ip_candidate_reserved
-    registered_ips_in_prefix   = var.registered_ips_in_prefix
+    request_id               = var.request_id
+    vm_name                  = var.vm_name
+    environment              = var.environment
+    site                     = var.site
+    prefix                   = var.prefix
+    prefix_id                = var.prefix_id
+    ip_address               = var.ip_candidate
+    ip_candidate_reserved    = var.ip_candidate_reserved
+    registered_ips_in_prefix = var.registered_ips_in_prefix
   }
 }
 
