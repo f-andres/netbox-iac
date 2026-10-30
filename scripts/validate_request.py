@@ -31,7 +31,7 @@ with request_file.open("rb") as f:
 
 required = {
     "request": ["request_id", "name", "environment", "resource_type"],
-    "compute": ["instance_type", "operating_system"],
+    "compute": ["cpus", "memory", "disk", "image"],
     "network": ["site", "prefix"],
 }
 
