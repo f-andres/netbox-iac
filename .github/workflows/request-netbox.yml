@@ -68,6 +68,7 @@ jobs:
 
           print("JSON generado:")
           print(json.dumps(data, indent=2, ensure_ascii=False))
+          PY
   
       - name: Verify NetBox JSON
         shell: bash
