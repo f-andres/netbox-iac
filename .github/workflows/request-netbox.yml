@@ -32,44 +32,19 @@ jobs:
         env:
           REQUEST_PATH: ${{ inputs.request_path }}
         run: |
-          set -euo pipefail
+              set -euo pipefail
               echo "Archivo recibido: $REQUEST_PATH"
-          echo "Contenido del TOML:"
-          cat "$REQUEST_PATH"
+              cat "$REQUEST_PATH"
+              python3 - "$REQUEST_PATH" <<'PY'
+              import sys
+              import tomllib
+              from pathlib import Path
+              data = tomllib.loads(Path(sys.argv[1]).read_text())
 
-          echo "Validación de campos:"
-          python3 - "$REQUEST_PATH" <<'PY'
-          import sys
-          import tomllib
-          from pathlib import Path
-
-          data = tomllib.loads(Path(sys.argv[1]).read_text())
-
-          print("Secciones:", list(data.keys()))
-          print("Compute:", data.get("compute", {}))
-          print("CPUs:", data.get("compute", {}).get("cpus"))
-          python3 scripts/validate_request.py "$REQUEST_PATH" | tee netbox-output.txt
-
-          python3 - <<'PY'
-          import json
-          from pathlib import Path
-
-          output = Path("netbox-output.txt").read_text(encoding="utf-8")
-          start = output.find('{\n  "request_id"')
-
-          if start == -1:
-              raise SystemExit("No se encontró el objeto JSON en la salida de NetBox")
-
-          data = json.loads(output[start:])
-          Path("netbox-result.json").write_text(
-              json.dumps(data, indent=2, ensure_ascii=False) + "\n",
-              encoding="utf-8",
-          )
-
-          print("JSON generado:")
-          print(json.dumps(data, indent=2, ensure_ascii=False))
-          PY
-  
+              print("Secciones:", list(data.keys()))
+              print("Compute:", data.get("compute", {}))
+              print("CPUs:", data.get("compute", {}).get("cpus"))
+              PY
       - name: Verify NetBox JSON
         shell: bash
         run: |
