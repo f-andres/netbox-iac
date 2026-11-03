@@ -35,16 +35,7 @@ jobs:
               set -euo pipefail
               echo "Archivo recibido: $REQUEST_PATH"
               cat "$REQUEST_PATH"
-              python3 - "$REQUEST_PATH" <<'PY'
-              import sys
-              import tomllib
-              from pathlib import Path
-              data = tomllib.loads(Path(sys.argv[1]).read_text())
-
-              print("Secciones:", list(data.keys()))
-              print("Compute:", data.get("compute", {}))
-              print("CPUs:", data.get("compute", {}).get("cpus"))
-              PY
+         
       - name: Verify NetBox JSON
         shell: bash
         run: |
