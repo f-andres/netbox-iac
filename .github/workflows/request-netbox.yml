@@ -71,7 +71,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          terraform -chdir=terraform/local-test apply \
+          terraform -chdir=terraform/local-test apply -auto-approve \
             -var-file=../../netbox-result.json \
 
           echo "## Resultado Terraform" >> "$GITHUB_STEP_SUMMARY"
