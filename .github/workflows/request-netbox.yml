@@ -1,4 +1,5 @@
 
+
 name: Read TOML and query NetBox
 
 on:
@@ -16,7 +17,7 @@ permissions:
 jobs:
   validate-request:
     runs-on: [self-hosted, macOS]
-    timeout-minutes: 5
+    timeout-minutes: 10
 
     env:
       NETBOX_URL: ${{ vars.NETBOX_URL || 'http://localhost:8000' }}
@@ -27,19 +28,22 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Query NetBox and create clean JSON
+      - name: Validate request and query NetBox
         shell: bash
         env:
           REQUEST_PATH: ${{ inputs.request_path }}
         run: |
-              set -euo pipefail
-              echo "Archivo recibido: $REQUEST_PATH"
-              cat "$REQUEST_PATH"
-         
-      - name: Verify NetBox JSON
-        shell: bash
-        run: |
           set -euo pipefail
+
+          echo "Archivo recibido: $REQUEST_PATH"
+          test -f "$REQUEST_PATH"
+          cat "$REQUEST_PATH"
+
+          echo "Validando solicitud y consultando NetBox..."
+          python3 scripts/validate_request.py "$REQUEST_PATH"
+
+          echo "Verificando JSON generado..."
+          test -f netbox-result.json
           python3 -m json.tool netbox-result.json
 
       - name: Terraform init
