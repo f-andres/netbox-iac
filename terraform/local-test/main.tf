@@ -16,57 +16,47 @@ provider "multipass" {
   default_image   = "24.04"
 }
 
-variable "request_id" {
-  type = string
-}
-
 variable "vm_name" {
-  type = string
+  description = "Nombre de la máquina virtual"
+  type        = string
 }
 
-variable "environment" {
-  type = string
+variable "cpus" {
+  description = "Cantidad de CPU"
+  type        = number
+  default     = 2
 }
 
-variable "site" {
-  type = string
+variable "memory" {
+  description = "Memoria RAM"
+  type        = string
+  default     = "2G"
 }
 
-variable "prefix" {
-  type = string
+variable "disk" {
+  description = "Tamaño del disco"
+  type        = string
+  default     = "20G"
 }
 
-variable "prefix_id" {
-  type = number
+variable "image" {
+  description = "Imagen Ubuntu para Multipass"
+  type        = string
+  default     = "24.04"
 }
 
-variable "ip_candidate" {
-  type = string
+resource "multipass_instance" "vm" {
+  name   = var.vm_name
+  image  = var.image
+  cpus   = var.cpus
+  memory = var.memory
+  disk   = var.disk
 }
 
-variable "ip_candidate_reserved" {
-  type = bool
+output "vm_name" {
+  value = multipass_instance.vm.name
 }
 
-variable "registered_ips_in_prefix" {
-  type = number
-}
-
-resource "terraform_data" "vm_request" {
-  input = {
-    request_id               = var.request_id
-    vm_name                  = var.vm_name
-    environment              = var.environment
-    site                     = var.site
-    prefix                   = var.prefix
-    prefix_id                = var.prefix_id
-    ip_address               = var.ip_candidate
-    ip_candidate_reserved    = var.ip_candidate_reserved
-    registered_ips_in_prefix = var.registered_ips_in_prefix
-  }
-}
-
-output "vm_request_preview" {
-  description = "Vista previa de la solicitud obtenida de NetBox"
-  value       = terraform_data.vm_request.output
+output "vm_state" {
+  value = multipass_instance.vm.state
 }
