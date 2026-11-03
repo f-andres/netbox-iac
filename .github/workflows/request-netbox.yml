@@ -65,3 +65,17 @@ jobs:
           terraform -chdir=terraform/local-test show -no-color tfplan \
             >> "$GITHUB_STEP_SUMMARY"
           echo '```' >> "$GITHUB_STEP_SUMMARY"
+
+
+      - name: Terraform apply
+        shell: bash
+        run: |
+          set -euo pipefail
+          terraform -chdir=terraform/local-test apply \
+            -var-file=../../netbox-result.json \
+
+          echo "## Resultado Terraform" >> "$GITHUB_STEP_SUMMARY"
+          echo '```text' >> "$GITHUB_STEP_SUMMARY"
+          terraform -chdir=terraform/local-test show -no-color tfplan \
+            >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
